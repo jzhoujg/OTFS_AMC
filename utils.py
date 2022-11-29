@@ -6,7 +6,6 @@ import random
 
 import torch
 from tqdm import tqdm
-
 import matplotlib.pyplot as plt
 
 
@@ -165,7 +164,6 @@ def read_pickle(file_name: str) -> list:
 def train_one_epoch(model, optimizer, data_loader, device, epoch):
     model.train()
     loss_function = torch.nn.CrossEntropyLoss()
-
     accu_loss = torch.zeros(1).to(device)  # 累计损失
     accu_num = torch.zeros(1).to(device)   # 累计预测正确的样本数
     optimizer.zero_grad()
@@ -174,7 +172,6 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
     data_loader = tqdm(data_loader, file=sys.stdout)
     for step, data in enumerate(data_loader):
         images, labels = data
-
         sample_num += images.shape[0]
 
         pred = model(images.to(device))
@@ -196,8 +193,6 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
         # for p in model.parameters():
         #     print(p.grad.data)
         optimizer.step()
-
-
         optimizer.zero_grad()
 
     return accu_loss.item() / (step + 1), accu_num.item() / sample_num
@@ -243,7 +238,7 @@ def test_model(model,data_loader,device,categories = 5):
     sample_num = 0
     data_loader = tqdm(data_loader, file=sys.stdout)
 
-    confusion_matrix = torch.zeros([2,2])
+    confusion_matrix = torch.zeros([5,5])# 根据分类的类别总数而进行设置
     for step, data in enumerate(data_loader):
         images, labels = data
         sample_num += images.shape[0]
@@ -255,11 +250,10 @@ def test_model(model,data_loader,device,categories = 5):
         accu_num += torch.eq(pred_classes, labels.to(device)).sum()
 
         for i in range(len(pred_classes)):
-
             confusion_matrix[labels[i],pred_classes[i]] += 1
             print(step)
 
-    print(confusion_matrix/3000)
-    print(accu_num/6000)
+    print(confusion_matrix/600)
+    print(accu_num/3000)
 
     return

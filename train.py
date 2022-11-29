@@ -10,13 +10,11 @@ from my_dataset import MyDataSet
 from model import OTFS_OFDM_CNN as create_model
 from utils import read_split_data, train_one_epoch, evaluate
 
-
 def main(args):
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
     if os.path.exists("./weights") is False:
         os.makedirs("./weights")
-
     tb_writer = SummaryWriter()
 
     train_images_path, train_images_label, val_images_path, val_images_label = read_split_data(args.data_path) #保持创建文件夹的方式就行
@@ -70,7 +68,7 @@ def main(args):
         #     else ['head.weight', 'head.bias']
         # # for k in del_keys:
         # #     del weights_dict[k]
-        #print(model.load_state_dict(weights_dict, strict=False))
+        print(model.load_state_dict(weights_dict, strict=False))
 
 
     # if args.freeze_layers:
@@ -95,7 +93,10 @@ def main(args):
                                                 device=device,
                                                 epoch=epoch)
 
+
+
         scheduler.step()
+
 
         # validate
         val_loss, val_acc = evaluate(model=model,
@@ -107,15 +108,15 @@ def main(args):
         tb_writer.add_scalar(tags[0], train_loss, epoch)
         tb_writer.add_scalar(tags[1], train_acc, epoch)
         tb_writer.add_scalar(tags[2], val_loss, epoch)
-        tb_writer.add_scalar(tags[3], val_acc, epoch)
+        tb_writer.add_scalar(tags[3]    , val_acc, epoch)
         tb_writer.add_scalar(tags[4], optimizer.param_groups[0]["lr"], epoch)
+
 
         torch.save(model.state_dict(), "./weights/model-{}.pth".format(epoch))
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_classes', type=int, default=6)
+    parser.add_argument('--num_classes', type=int, default=2)
     parser.add_argument('--epochs', type=int, default=50)
     parser.add_argument('--batch-size', type=int, default=128)
     parser.add_argument('--lr', type=float, default=0.01)
@@ -124,14 +125,12 @@ if __name__ == '__main__':
     # 数据集所在根目录
     # https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz
     parser.add_argument('--data-path', type=str,
-                        default="E:\Projects\OTFS_MODULATIONS_IDENTIFICATION\OTFS_SYN\offs_ofdm2")
+                        default="E:\Projects\OTFS_MODULATIONS_IDENTIFICATION\OTFS_SYN\otfs_ofdm")
     parser.add_argument('--model-name', default='bvpt_model', help='create model name')
-
     # 预训练权重路径，如果不想载入就设置为空字符
     parser.add_argument('--weights', type=str, default='', help='initial weights path')
     # 是否冻结权重
     parser.add_argument('--freeze-layers', type=bool, default=True)
     parser.add_argument('--device', default='cuda:0', help='device id (i.e. 0 or 0,1 or cpu)')
-
     opt = parser.parse_args()
     main(opt)

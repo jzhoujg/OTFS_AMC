@@ -32,6 +32,9 @@ def main(args):
     print('Using {} dataloader workers every process'.format(nw))
 
 
+
+
+
     train_loader = torch.utils.data.DataLoader(test_dataset,
                                                batch_size=300,
                                                shuffle=True,
@@ -51,19 +54,21 @@ def main(args):
 
 
     test_model(model=model,
-            data_loader=train_loader,
-                                                device=device)
+               data_loader=train_loader,
+               device=device)
+
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-path', type=str,
-                        default="./test_dataset2_1800Hz")
+                        default="E:\Projects\OTFS_MODULATIONS_IDENTIFICATION\OTFS_SYN\otfs_m_test")
     parser.add_argument('--model-name', default='bvpt_model', help='create model name')
     parser.add_argument('--weights', type=str, default='last.pth', help='initial weights path')
     # 是否冻结权重
     parser.add_argument('--freeze-layers', type=bool, default=True)
     parser.add_argument('--device', default='cuda:0', help='device id (i.e. 0 or 0,1 or cpu)')
-
     opt = parser.parse_args()
     main(opt)
+
+
