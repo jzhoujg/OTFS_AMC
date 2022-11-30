@@ -76,6 +76,7 @@ class OTFS_OFDM_CNN(nn.Module):
         res[:,0,0, :] = data.real
         res[:,0,1, :] = data.imag
 
+
         return res
 
 
