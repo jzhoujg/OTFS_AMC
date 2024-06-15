@@ -1,36 +1,20 @@
-
-
 # Deep Learning-Based Automatic Modulation Recognition in OTFS and OFDM systems
 
 ---
 
-
-
 ### Introduction
 
-
-
 **Background:**   Automatic modulation recognition (AMR) is one of the most essential techniques in non-cooperative orthogonal time frequency space (OTFS) and orthogonal frequency division multiplexing (OFDM) communication systems. Since coexistence of OTFS and OFDM is a potential and practical solution in  the future wireless communication scenarios, classification of the OTFS scheme and the OFDM scheme will be a challenging and meaningful task. 
-
-
 
 This is the code for  our paper ["Deep Learning-Based Automatic Modulation Recognition in OTFS and OFDM systems"](https://ieeexplore.ieee.org/document/10200971). In this paper, we propose a deep learningbased method, including multi-layer convolution neural networks (CNNs) and an attention-based residual Squeeze-and-Excitation Module (SE), to extract effective characteristics of OTFS and OFDM signals in multi-path Doppler spread fading channel.
 
 This repo consists of two parts: the **transmitter* and the **deep learning-based* model.
 
-
-
-
-
-
-
 ---
 
 ### Transmitter
 
-
-
-![Transmitter](./pic/transmitter.png)
+<img src="./pic/transmitter.png" title="" alt="Transmitter" data-align="inline">
 
 Transmitter module aims to produce the OTFS data and OFDM data. According to above figure, the process of generating OTFS signals is related to OFDM modulation.
 
@@ -40,15 +24,9 @@ First, we produce OTFS data and OFDM data via MATLAB. You can refer to the file 
 
 ### Deep Learning-based model
 
-
-
 Then, we employ the classic CNN-5 model to realize the classification. SE module is leveraged to extract global features. Results show that attention-based module can also deal with the signal which is corrupted by Doppler effect.
 
-
-
 ![](E:\Projects\OTFS_AMC-main\OTFS_AMC-main\pic\model.png)
-
-
 
 The model is realized in **model.py**.  You can run this code directly by
 
@@ -65,8 +43,6 @@ We will update this part next time.
 ## Citation
 
 If you find something helpful, you are welcome to cite this work.
-
-
 
 `@INPROCEEDINGS{10200971,
   author={Zhou, Jinggan and Liao, Xuewen and Gao, Zhenzhen},
