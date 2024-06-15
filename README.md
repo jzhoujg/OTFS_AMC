@@ -26,7 +26,7 @@ First, we produce OTFS data and OFDM data via MATLAB. You can refer to the file 
 
 Then, we employ the classic CNN-5 model to realize the classification. SE module is leveraged to extract global features. Results show that attention-based module can also deal with the signal which is corrupted by Doppler effect.
 
-![](E:\Projects\OTFS_AMC-main\OTFS_AMC-main\pic\model.png)
+![model](./pic/model.png)
 
 The model is realized in **model.py**.  You can run this code directly by
 
