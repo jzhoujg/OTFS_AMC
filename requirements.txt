@@ -1,0 +1,11 @@
+# Core
+torch>=1.10
+numpy
+scipy
+tqdm
+
+# Optional: confusion-matrix figure in evaluate.py
+matplotlib
+
+# Optional: training logs in train.py
+tensorboard

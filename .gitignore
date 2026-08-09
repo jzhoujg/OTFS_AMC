@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Training artifacts
+weights/
+*.pth
+*.pth.tar
+runs/
+events.out.tfevents.*
+
+# Generated data (keep 1.mat as a bundled sample)
+data/
+otfs_rice/
+*.mat
+!1.mat
+
+# Figures produced by evaluate.py
+*.png
+!pic/*.png
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
