@@ -1,3 +1,22 @@
+% =========================================================================
+%  OFDM 信号生成 (OFDM modulation over a multipath-Doppler Rayleigh channel)
+% =========================================================================
+%  作用: 批量生成 OFDM 接收信号, 每个 .mat 文件保存一个样本的 sig_rec
+%        (复基带接收序列, 长度 2560, 供 Python 端 OTFS_OFDM_CNN 分类)。
+%
+%  调制阶数: bpsk / qpsk / 8psk / 16qam / 64qam / 256qam (变量 hub)。
+%  每个样本 = N_frm(=32) 个子帧, 每子帧 N_fft + N_cp = 64 + 16 = 80 个采样点,
+%            故 sig_rec 长度 = 32 * 80 = 2560 (与 OTFS 端一致)。
+%  信道    : comm.RayleighChannel (多径 + 最大多普勒频移) + AWGN。
+%  SNR     : 从 -10 dB 起, 每生成 num/6 个样本提升 5 dB。
+%
+%  输出: ./otfs_rice/a{1..6}_ofdm_{mode}/<mode>_<n><SNR>.mat
+%        字段 sig_rec 即接收信号。二分类任务中, 这些样本统一标记为 "ofdm"。
+%
+%  依赖: MATLAB Communications Toolbox。
+%
+%  说明: 本文件为作者原始仿真脚本, 仅补充说明性头注释, 核心逻辑未改动。
+% =========================================================================
 clc;
 clear;
 %% 参数设置
@@ -27,15 +46,15 @@ rayleighchan = comm.RayleighChannel(...
     'NormalizePathGains',true, ...
     'MaximumDopplerShift',max_doppler_shift);
 
-% 第一个for循环，主要为了遍历各种预设的调制方式 
+% 第一个for循环，主要为了遍历各种预设的调制方式
 for mm = hub
- 
+
     mode = mode_dict.(mm); %选择调制模式
     M = str2num(M_dict.(mm));   %调制阶数
-    SNR=-10;         %初始信噪比仿真信噪比          
+    SNR=-10;         %初始信噪比仿真信噪比
     Nd=N_sc*log2(M);               % 数据总数
     num = 3000; % 一个调制方式的数据单位总量
-  
+
     % 文件名设置
     filename =['./otfs_rice/a',num2str(mm-'a'+1),'_ofdm_',mode,'/']; %保存文件名设置
     FILE = [mode,'_'];
@@ -44,7 +63,7 @@ for mm = hub
     %调制方式的生成
     for nn = 1:num
 
-        
+
          sig_rec = [];% 保存信号
 
          % DD 瑞利信道的生成
@@ -54,10 +73,10 @@ for mm = hub
         'AveragePathGains',path_gain, ...
         'NormalizePathGains',true, ...
         'MaximumDopplerShift',max_doppler_shift);
-   
+
         % 子帧的生成
         for jj = 1: N_frm
-            
+
            %% 基带数据数据产生
             P_data=randi([0 1],1,Nd);
            %% 调制
@@ -66,18 +85,18 @@ for mm = hub
             data_temp2= bi2de(data_temp1);                       %二进制转化为十进制
             % modu_data=pskmod(data_temp2,M,pi/M);                 % QPSK调制
 
-            if M < 10 
-                modu_data=pskmod(data_temp2,M,pi/M);         
+            if M < 10
+                modu_data=pskmod(data_temp2,M,pi/M);
             end
             % QAM调制的方式
             if M > 10
-                modu_data=qammod(data_temp2,M,'UnitAveragePower',true); 
+                modu_data=qammod(data_temp2,M,'UnitAveragePower',true);
             end
-            
-            % 信号进行并串转换
-            data = modu_data;     
 
-            %% IFFT   
+            % 信号进行并串转换
+            data = modu_data;
+
+            %% IFFT
             % 信号做DFT
             ifft_data=ifft(data,N_fft)*sqrt(N_fft);
             %% 插入保护间隔、循环前缀
@@ -86,18 +105,18 @@ for mm = hub
             Tx_data=reshape(Tx_cd,[],1);%由于传输需要
             %% 信道（通过多经瑞利信道）
              %生成信道
-             
+
 %             CUM4EST(sig_rec, 1, 2560, 0, 'biased', 0, 0
-            
+
              % 信号经过信道，相当于作卷积的过程
             Tx_data= rayleighchan(Tx_data);
         %     Tx_data = conv(Tx_data,H);
             rx_channel=awgn(Tx_data,SNR,'measured');%添加高斯白噪声
             sig_rec = [sig_rec;rx_channel];
-            end 
+            end
             savewords = [filename,FILE,num2str(nn),snr,'.mat'];
             if mod(nn,500)==0
-                   nn    
+                   nn
             end
             if mod(nn,num/6) == 0
                 SNR = SNR + 5
